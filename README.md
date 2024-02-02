@@ -13,6 +13,10 @@ For authorization use user's email from https://jsonplaceholder.typicode.com/use
 
 For example: Sincere@april.biz, Shanna@melissa.tv, Nathan@yesenia.net
 
+Any password, just to pass validation
+
+For example: qwerty123
+
 ## Requirements:
 
 - An app with login screen and a list of feed definitions.
