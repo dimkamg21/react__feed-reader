@@ -1,30 +1,62 @@
-# React + TypeScript + Vite
+# Data reader app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An app using React.js, that stores, lists and presents articles from feeds.
 
-Currently, two official plugins are available:
+## Links:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [DEMO](https://dimkamg21.github.io/react__feed-reader/)
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Usage:
 
-- Configure the top-level `parserOptions` property like this:
+For authorization use user's email from https://jsonplaceholder.typicode.com/users API
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+For example: Sincere@april.biz, Shanna@melissa.tv, Nathan@yesenia.net
+
+## Requirements:
+
+- An app with login screen and a list of feed definitions.
+- Extend the app to fetch the current articles of a feed and show the current articles of a single feed with title and date.
+- Each article can be tapped, and the app shows the article in a new screen.
+
+## Build With
+
+- React
+- Bulma (for styles)
+- Formik (for form control)
+- TypeScript
+
+## Setup
+
+1. (Recommended)Use lts version of node.js <br>`
+
+2. Clone the repository to your local machine, open terminal (GitBash for Windows users) and clone repo with command bellow:
+
+```sh
+git clone https://github.com/dimkamg21/react__feed-reader.git
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. Open editor, set up project and install necessary packages in the code-editor you use:
+
+```sh
+$ npm install
+```
+
+4. Open the project in browser:
+
+```sh
+$ npm run dev
+```
+
+4. Bulid project:
+
+```sh
+$ npm run build
+```
+
+## Author
+
+- GitHub - [Dmytro Hlukhenkyi](https://github.com/dimkamg21)
+
+- LinkedIn - [Dmytro Hlukhenkyi](https://www.linkedin.com/in/dmytro-hlukhenkyi/)
+
