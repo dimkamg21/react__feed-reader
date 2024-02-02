@@ -1,46 +1,153 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { Post } from "../../types/Post";
+import { TitleBox } from "../TitleBox/TitleBox.tsx";
+import { ContentType } from "../../types/ContentType";
+import { AddPost } from "../AddPost/AddPost";
+import { getDataFromJSON } from "../../helpers/getDataFromJSON.ts";
+import { AuthContext } from "../Auth/AuthContext.tsx";
 import { Feed } from "../../types/Feed.ts";
-import { fetchXmlData } from "../../helpers/fetchXMLData.ts";
 import { getDataFromXML } from "../../helpers/getDataFromXML.ts";
+import "./Main.scss";
 
-export const Main = () => {
-  const [items, setItems] = useState<Feed[]>();
+export const Main: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [newsFeeds, setNewsFeeds] = useState<Feed[]>([]);
+
+  const [selectedContentType, setSelectedContentType] =
+    useState<ContentType | null>(ContentType.NASA);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [isAddPostModalOpen, setIsAddPostModalOpen] = useState(false);
+
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const xmlDoc = await fetchXmlData(
-          "https://www.nasa.gov/news-release/feed/",
-        );
-        const newsData = getDataFromXML(xmlDoc);
+        if (user) {
+          const jsonData: Post[] = (await getDataFromJSON(user.id)) || [];
+          const xmlData: Feed[] = await getDataFromXML(
+            "https://www.nasa.gov/news-release/feed/",
+          );
 
-        setItems(newsData);
+          setPosts(jsonData);
+          setNewsFeeds(xmlData);
+        }
       } catch (error) {
-        throw new Error("Error fetching XML:" + error);
+        throw new Error("Error fetching JSON:" + error);
       }
     };
 
     fetchData();
   }, []);
 
-  return (
-    <>
-      <h1 className="title card-header-title">Main page here3</h1>
+  const handleContentTypeChange = (contentType: ContentType) => {
+    setSelectedContentType(contentType);
+    setIsDropdownVisible(false); // Ховаємо випадаючий список після вибору
+  };
 
-      {items && (
-        <div className="box">
-          {items.map((item) => (
-            <div key={item.title} className="box">
-              <h1 className="card-header-title">{item.title}</h1>
-              <p className="is-dark">{item.pubDate}</p>
-              <div
-                className="box"
-                dangerouslySetInnerHTML={{ __html: item.description }}
-              />
+  const toggleDropdownVisibility = () => {
+    setIsDropdownVisible(!isDropdownVisible);
+  };
+
+  const openAddPostModal = () => {
+    setIsAddPostModalOpen(true);
+  };
+
+  const closeAddPostModal = () => {
+    setIsAddPostModalOpen(false);
+  };
+
+  const handleAddPost = (post: Post) => {
+    setPosts([post, ...posts]);
+    closeAddPostModal();
+  };
+
+  const handleDeletePost = (postId: number) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+  };
+
+  return (
+    <div className="main-container">
+      <div className={`dropdown ${isDropdownVisible ? "is-active" : ""}`}>
+        <div className="flex-container">
+          <div className="dropdown-trigger">
+            <button
+              className="button"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu"
+              onClick={toggleDropdownVisibility}
+            >
+              <span>
+                {selectedContentType
+                  ? `${selectedContentType}`
+                  : "Choose feeds list"}
+              </span>
+              <span className="icon is-small">
+                <i className="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+            {selectedContentType === ContentType.MyBlock && (
+              <button
+                className="button is-success is-outlined"
+                onClick={openAddPostModal}
+              >
+                Add post
+              </button>
+            )}
+          </div>
+          <div className="dropdown-menu" id="dropdown-menu" role="menu">
+            <div className="dropdown-content">
+              <a
+                href="#"
+                className="dropdown-item"
+                onClick={() => handleContentTypeChange(ContentType.NASA)}
+              >
+                {ContentType.NASA}
+              </a>
+              <a
+                className="dropdown-item"
+                onClick={() => handleContentTypeChange(ContentType.MyBlock)}
+              >
+                {ContentType.MyBlock}
+              </a>
             </div>
-          ))}
+          </div>
+        </div>
+      </div>
+
+      {selectedContentType === ContentType.MyBlock && (
+        <TitleBox
+          type={selectedContentType}
+          posts={posts}
+          onDeletePost={handleDeletePost}
+        />
+      )}
+      {selectedContentType === ContentType.NASA && (
+        <TitleBox
+          type={selectedContentType}
+          posts={newsFeeds}
+          onDeletePost={handleDeletePost}
+        />
+      )}
+
+      {isAddPostModalOpen && (
+        <div className="modal is-active">
+          <div className="modal-background" onClick={closeAddPostModal}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">Add Post</p>
+              <button
+                className="delete"
+                aria-label="close"
+                onClick={closeAddPostModal}
+              ></button>
+            </header>
+            <section className="modal-card-body">
+              <AddPost onAddPost={handleAddPost} />
+            </section>
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

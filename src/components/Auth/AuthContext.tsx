@@ -7,6 +7,7 @@ export const AuthContext = createContext({
   authorized: false,
   login: (_email: string, _password: string) => Promise.resolve(),
   user: {} as User | null,
+  logout: () => {}
 });
 
 type Props = {
@@ -22,7 +23,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     try {
       const fetchedUsers = await getUser<User>(email);
       const currentUser = fetchedUsers[0];
-      console.log(currentUser);
 
       if (currentUser === undefined || currentUser.email === "") {
         throw new Error("There is no user with this login");
@@ -34,23 +34,27 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     }
   }
 
+  function logout() {
+    if (authorized) {
+      setAuthorized(false);
+      setUser(null);
+    }
+  }
+
   useEffect(() => {
     if (user && user.username) {
       setAuthorized(true);
-      console.log(`he he ${authorized}`);
     }
   }, [user]);
 
   useEffect(() => {
-    console.log("useEffect authorized", authorized);
-
     if (authorized) {
       navigate("/");
     }
   }, [authorized]);
 
   return (
-    <AuthContext.Provider value={{ authorized, login, user }}>
+    <AuthContext.Provider value={{ authorized, login, logout, user }}>
       {children}
     </AuthContext.Provider>
   );

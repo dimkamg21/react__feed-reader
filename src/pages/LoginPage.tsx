@@ -2,35 +2,13 @@ import { Formik, Form, Field } from "formik";
 import { useContext, useState } from "react";
 import cn from "classnames";
 import { AuthContext } from "../components/Auth/AuthContext";
-
-function validateEmail(value: string) {
-  if (!value) {
-    return "Email is required";
-  }
-
-  const emailPattern = /^[\w.+-]+@([\w-]+\.){1,3}[\w-]{2,}$/;
-
-  if (!emailPattern.test(value)) {
-    return "Email is not valid";
-  }
-}
-
-function validatePassword(value: string) {
-  if (!value) {
-    return "Password is required";
-  }
-
-  if (value.length < 6) {
-    return "At least 6 characters";
-  }
-}
+import { validateService } from "../helpers/validateService.ts";
 
 export const LoginPage = () => {
   const [error, setError] = useState("");
   const { login } = useContext(AuthContext);
 
   return (
-    // <h1 >hey</h1>
     <Formik
       initialValues={{
         email: "",
@@ -38,14 +16,14 @@ export const LoginPage = () => {
       }}
       validateOnMount={true}
       onSubmit={async ({ email, password }) => {
-          try {
-              setError('');
+        try {
+          setError("");
 
-              await login(email, password);
-          } catch (error) {
-              // @ts-ignore
-              setError(error.message); // Assuming error is an instance of Error
-          }
+          await login(email, password);
+        } catch (error) {
+          // @ts-ignore
+          setError(error.message); // Assuming error is an instance of Error
+        }
       }}
     >
       {({ touched, errors, isSubmitting }) => (
@@ -59,7 +37,7 @@ export const LoginPage = () => {
 
             <div className="control has-icons-left has-icons-right">
               <Field
-                validate={validateEmail}
+                validate={validateService.validateEmail}
                 name="email"
                 type="email"
                 id="email"
@@ -92,7 +70,7 @@ export const LoginPage = () => {
 
             <div className="control has-icons-left has-icons-right">
               <Field
-                validate={validatePassword}
+                validate={validateService.validatePassword}
                 name="password"
                 type="password"
                 id="password"
@@ -131,7 +109,7 @@ export const LoginPage = () => {
               Log in
             </button>
 
-              {(error) && <p className="help is-danger pt-4">{error}</p>}
+            {error && <p className="help is-danger pt-4">{error}</p>}
           </div>
         </Form>
       )}
