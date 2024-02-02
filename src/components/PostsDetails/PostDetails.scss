@@ -1,0 +1,13 @@
+.modal-card {
+  &-head {
+    font-weight: bold;
+  }
+
+  &-title {
+    font-weight: 600;
+  }
+
+  & .post {
+    margin-bottom: 20px;
+  }
+}

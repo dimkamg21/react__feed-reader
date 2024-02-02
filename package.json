@@ -10,8 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "bulma": "^0.9.4",
+    "classnames": "^2.5.1",
+    "formik": "^2.4.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.3",
+    "rss-parser": "^3.13.0",
+    "sass": "^1.70.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -22,6 +29,7 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "prettier": "3.2.4",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }
