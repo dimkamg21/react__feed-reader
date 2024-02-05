@@ -21,7 +21,11 @@ export const Header = () => {
             <span className="">{user ? user.name : "Home"}</span>
           </div>
           <div className="navbar-end">
-            <Link to="login" className="button is-light" onClick={() => logout()}>
+            <Link
+              to="login"
+              className="button is-light"
+              onClick={() => logout()}
+            >
               Logout
               <span className="icon pr-3 pl-5">
                 <i className="fas fa-door-open"></i>

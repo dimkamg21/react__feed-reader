@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import React, {useContext, useState} from "react";
 import { Post } from "../../types/Post";
 import {AuthContext} from "../Auth/AuthContext.tsx";
 

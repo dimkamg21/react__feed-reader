@@ -2,7 +2,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RequireAuth } from "./components/Auth/RequireAuth";
 import { AuthProvider } from "./components/Auth/AuthContext";
-// import { NotFoundPage } from "./pages/NotFoundPage.tsx";
+import { NotFoundPage } from "./pages/NotFoundPage.tsx";
 import { Header } from "./components/Header/Header.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { LoginPage } from "./pages/LoginPage";
@@ -18,9 +18,8 @@ export const App = () => (
           <Route element={<Header />}>
             <Route path="/" element={<HomePage />} />
           </Route>
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-
-        {/*<Route path="*" element={<NotFoundPage />} />*/}
       </Routes>
     </AuthProvider>
   </BrowserRouter>

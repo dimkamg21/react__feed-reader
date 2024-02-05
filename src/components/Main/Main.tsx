@@ -3,20 +3,26 @@ import { Post } from "../../types/Post";
 import { TitleBox } from "../TitleBox/TitleBox.tsx";
 import { ContentType } from "../../types/ContentType";
 import { AddPost } from "../AddPost/AddPost";
-import { getDataFromJSON } from "../../helpers/getDataFromJSON.ts";
 import { AuthContext } from "../Auth/AuthContext.tsx";
-import { Feed } from "../../types/Feed.ts";
-import { getDataFromXML } from "../../helpers/getDataFromXML.ts";
+import { Loader } from "../Loader/Loader.tsx";
+import { useDispatch } from "react-redux";
+import {
+  addNewPost,
+  fetchInitialPosts,
+  removePost,
+} from "../../store/slices/postsSlice.ts";
+import { fetchInitialFeeds } from "../../store/slices/feedsSlice.ts";
+import { AppDispatch } from "../../store/store.ts";
 import "./Main.scss";
 
 export const Main: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [newsFeeds, setNewsFeeds] = useState<Feed[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
 
   const [selectedContentType, setSelectedContentType] =
     useState<ContentType | null>(ContentType.NASA);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isAddPostModalOpen, setIsAddPostModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { user } = useContext(AuthContext);
 
@@ -24,25 +30,24 @@ export const Main: React.FC = () => {
     const fetchData = async () => {
       try {
         if (user) {
-          const jsonData: Post[] = (await getDataFromJSON(user.id)) || [];
-          const xmlData: Feed[] = await getDataFromXML(
-            "https://www.nasa.gov/news-release/feed/",
-          );
-
-          setPosts(jsonData);
-          setNewsFeeds(xmlData);
+          dispatch(fetchInitialPosts(user.id));
+          dispatch(fetchInitialFeeds());
         }
       } catch (error) {
-        throw new Error("Error fetching JSON:" + error);
+        throw new Error("Error fetching needed data:" + error);
       }
     };
 
-    fetchData();
+    fetchData().finally(() =>
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500),
+    );
   }, []);
 
   const handleContentTypeChange = (contentType: ContentType) => {
     setSelectedContentType(contentType);
-    setIsDropdownVisible(false); // Ховаємо випадаючий список після вибору
+    setIsDropdownVisible(false);
   };
 
   const toggleDropdownVisibility = () => {
@@ -58,12 +63,13 @@ export const Main: React.FC = () => {
   };
 
   const handleAddPost = (post: Post) => {
-    setPosts([post, ...posts]);
+    dispatch(addNewPost(post));
+
     closeAddPostModal();
   };
 
   const handleDeletePost = (postId: number) => {
-    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+    dispatch(removePost(postId));
   };
 
   return (
@@ -115,22 +121,16 @@ export const Main: React.FC = () => {
         </div>
       </div>
 
-      {selectedContentType === ContentType.MyBlock && (
-        <TitleBox
-          type={selectedContentType}
-          posts={posts}
-          onDeletePost={handleDeletePost}
-        />
+      {isLoading && <Loader />}
+
+      {selectedContentType === ContentType.MyBlock && !isLoading && (
+        <TitleBox type={selectedContentType} onDeletePost={handleDeletePost} />
       )}
-      {selectedContentType === ContentType.NASA && (
-        <TitleBox
-          type={selectedContentType}
-          posts={newsFeeds}
-          onDeletePost={handleDeletePost}
-        />
+      {selectedContentType === ContentType.NASA && !isLoading && (
+        <TitleBox type={selectedContentType} onDeletePost={handleDeletePost} />
       )}
 
-      {isAddPostModalOpen && (
+      {isAddPostModalOpen && !isLoading && (
         <div className="modal is-active">
           <div className="modal-background" onClick={closeAddPostModal}></div>
           <div className="modal-card">
