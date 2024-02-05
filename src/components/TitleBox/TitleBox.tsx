@@ -5,18 +5,22 @@ import { Post } from "../../types/Post";
 import { Feed } from "../../types/Feed.ts";
 import "./TitleBox.scss";
 import { useAppSelector } from "../../helpers/hooks/storeHoooks.ts";
+import {removePost} from "../../store/slices/postsSlice.ts";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../../store/store.ts";
 
 type Props = {
   type: ContentType;
-  onDeletePost: (postId: number) => void;
 };
 
-export const TitleBox: React.FC<Props> = ({ type, onDeletePost }) => {
+export const TitleBox: React.FC<Props> = ({ type }) => {
   const [selectedPost, setSelectedPost] = useState<Post | Feed | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { posts } = useAppSelector((state) => state.posts);
   const { feeds } = useAppSelector((state) => state.feeds);
+  const dispatch = useDispatch<AppDispatch>();
+
   const data = type === "NASA" ? feeds : posts;
 
   const openModal = (post: Post | Feed) => {
@@ -37,7 +41,7 @@ export const TitleBox: React.FC<Props> = ({ type, onDeletePost }) => {
   };
 
   const handleDeletePost = (postId: number) => {
-    onDeletePost(postId);
+    dispatch(removePost(postId));
   };
 
   return (

@@ -6,11 +6,7 @@ import { AddPost } from "../AddPost/AddPost";
 import { AuthContext } from "../Auth/AuthContext.tsx";
 import { Loader } from "../Loader/Loader.tsx";
 import { useDispatch } from "react-redux";
-import {
-  addNewPost,
-  fetchInitialPosts,
-  removePost,
-} from "../../store/slices/postsSlice.ts";
+import { addNewPost, fetchInitialPosts } from "../../store/slices/postsSlice.ts";
 import { fetchInitialFeeds } from "../../store/slices/feedsSlice.ts";
 import { AppDispatch } from "../../store/store.ts";
 import "./Main.scss";
@@ -68,10 +64,6 @@ export const Main: React.FC = () => {
     closeAddPostModal();
   };
 
-  const handleDeletePost = (postId: number) => {
-    dispatch(removePost(postId));
-  };
-
   return (
     <div className="main-container">
       <div className={`dropdown ${isDropdownVisible ? "is-active" : ""}`}>
@@ -124,10 +116,10 @@ export const Main: React.FC = () => {
       {isLoading && <Loader />}
 
       {selectedContentType === ContentType.MyBlock && !isLoading && (
-        <TitleBox type={selectedContentType} onDeletePost={handleDeletePost} />
+        <TitleBox type={selectedContentType} />
       )}
       {selectedContentType === ContentType.NASA && !isLoading && (
-        <TitleBox type={selectedContentType} onDeletePost={handleDeletePost} />
+        <TitleBox type={selectedContentType} />
       )}
 
       {isAddPostModalOpen && !isLoading && (
